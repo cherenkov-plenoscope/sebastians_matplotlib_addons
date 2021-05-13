@@ -80,6 +80,14 @@ def ax_add_circle(
     )
 
 
+def ax_add_hatches(ax, ix, iy, x_bin_edges, y_bin_edges, alpha=0.1):
+    x0 = x_bin_edges[ix]
+    x1 = x_bin_edges[ix + 1]
+    y0 = y_bin_edges[iy]
+    y1 = y_bin_edges[iy + 1]
+    ax.plot([x0, x1], [y0, y1], "-k", alpha=alpha)
+
+
 def ax_add_histogram(
     ax,
     bin_edges,
