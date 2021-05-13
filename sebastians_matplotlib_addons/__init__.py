@@ -56,6 +56,30 @@ def ax_add_grid(ax):
     ax.grid(color="k", linestyle="-", linewidth=0.66, alpha=0.1)
 
 
+def ax_add_circle(
+    ax,
+    x,
+    y,
+    r,
+    linewidth=1.0,
+    linestyle="-",
+    color="k",
+    alpha=1,
+    num_steps=1000,
+):
+    phi = np.linspace(0, 2 * np.pi, num_steps)
+    xs = x + r * np.cos(phi)
+    ys = y + r * np.sin(phi)
+    ax.plot(
+        xs,
+        ys,
+        linewidth=linewidth,
+        linestyle=linestyle,
+        alpha=alpha,
+        color=color,
+    )
+
+
 def ax_add_histogram(
     ax,
     bin_edges,
