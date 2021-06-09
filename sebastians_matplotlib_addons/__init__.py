@@ -8,6 +8,7 @@ import matplotlib.colors as plt_colors
 FIGURE_16_9 = {"rows": 1080, "cols": 1920, "fontsize": 1}
 FIGURE_4_3 = {"rows": 1080, "cols": 1440, "fontsize": 1}
 FIGURE_1_1 = {"rows": 1080, "cols": 1080, "fontsize": 1}
+FIGURE_2_1 = {"rows": 2*1080, "cols": 1080, "fontsize": 1}
 
 
 def figure(style=FIGURE_16_9, dpi=240):
@@ -102,14 +103,13 @@ def ax_add_histogram(
 ):
     assert bin_edges.shape[0] == bincounts.shape[0] + 1
     for i, bincount in enumerate(bincounts):
-        if bincount > 0:
-            ax.plot(
-                [bin_edges[i], bin_edges[i + 1]],
-                [bincount, bincount],
-                linestyle=linestyle,
-                color=linecolor,
-                alpha=linealpha,
-            )
+        ax.plot(
+            [bin_edges[i], bin_edges[i + 1]],
+            [bincount, bincount],
+            linestyle=linestyle,
+            color=linecolor,
+            alpha=linealpha,
+        )
         if bincounts_upper is not None and bincounts_lower is not None:
             both_nan = np.isnan(bincounts_upper[i]) and np.isnan(
                 bincounts_lower[i]
