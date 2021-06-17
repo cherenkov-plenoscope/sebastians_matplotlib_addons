@@ -127,6 +127,44 @@ def ax_add_histogram(
                 )
 
 
+def ax_add_box(ax, xlim, ylim, color="k", linewidth=None):
+    """
+    Draw a rectangular box in xlim, ylim to ax.
+    """
+    #  __
+    # |  |
+    ax.plot(
+        [xlim[0], xlim[1]],
+        [ylim[0], ylim[0]],
+        color=color,
+        linewidth=linewidth,
+    )
+    #  __
+    # |__
+    ax.plot(
+        [xlim[1], xlim[1]],
+        [ylim[0], ylim[1]],
+        color=color,
+        linewidth=linewidth,
+    )
+    #
+    # |__|
+    ax.plot(
+        [xlim[0], xlim[1]],
+        [ylim[1], ylim[1]],
+        color=color,
+        linewidth=linewidth,
+    )
+    #  __
+    #  __|
+    ax.plot(
+        [xlim[0], xlim[0]],
+        [ylim[0], ylim[1]],
+        color=color,
+        linewidth=linewidth,
+    )
+
+
 def write_video_from_image_slices(
     image_sequence_wildcard_path, output_path, frames_per_second=30, threads=1,
 ):
