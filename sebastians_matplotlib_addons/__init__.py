@@ -101,6 +101,7 @@ def ax_add_histogram(
     face_color=None,
     face_alpha=None,
     label=None,
+    draw_bin_walls=False,
 ):
     assert bin_edges.shape[0] == bincounts.shape[0] + 1
     for i, bincount in enumerate(bincounts):
@@ -112,6 +113,16 @@ def ax_add_histogram(
             alpha=linealpha,
             label=label if i == 0 else None,
         )
+        if draw_bin_walls and i+1 < bincounts.shape[0]:
+            ax.plot(
+                [bin_edges[i+1], bin_edges[i+1]],
+                [bincounts[i], bincounts[i + 1]],
+                linestyle=linestyle,
+                color=linecolor,
+                alpha=linealpha,
+            )
+
+
         if bincounts_upper is not None and bincounts_lower is not None:
             both_nan = np.isnan(bincounts_upper[i]) and np.isnan(
                 bincounts_lower[i]
