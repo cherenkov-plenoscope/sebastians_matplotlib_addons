@@ -5,6 +5,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.colors as plt_colors
 
+from . import hemisphere
+
 FIGURE_16_9 = {"rows": 1080, "cols": 1920, "fontsize": 1}
 FIGURE_4_3 = {"rows": 1080, "cols": 1440, "fontsize": 1}
 FIGURE_1_1 = {"rows": 1080, "cols": 1080, "fontsize": 1}
