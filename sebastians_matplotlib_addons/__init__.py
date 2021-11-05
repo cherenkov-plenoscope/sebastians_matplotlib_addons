@@ -28,7 +28,7 @@ def close_figure(fig):
 
 AXES_BLANK = {"spines": [], "axes": [], "grid": False}
 AXES_MINIMAL = {"spines": ["left", "bottom"], "axes": ["x", "y"], "grid": True}
-AXES_MATPLOTLIB = {"spines": ["left", "bottom", "right", "top"], "grid": False}
+AXES_MATPLOTLIB = {"spines": ["left", "bottom", "right", "top"], "axes": ["x", "y"], "grid": False}
 
 
 def add_axes(fig, span, style=AXES_MINIMAL):

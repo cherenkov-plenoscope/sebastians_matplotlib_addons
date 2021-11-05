@@ -7,11 +7,12 @@ def ax_add_points(
     ax,
     azimuths_deg,
     zeniths_deg,
-    point_diameter,
+    point_diameter_deg,
     color=None,
     alpha=None,
     rgbas=None,
 ):
+    point_diameter = np.deg2rad(point_diameter_deg)
     zeniths = np.deg2rad(zeniths_deg)
     azimuths = np.deg2rad(azimuths_deg)
 
@@ -88,8 +89,15 @@ def ax_add_grid(
         zd_edge = np.deg2rad(draw_lower_horizontal_edge_deg)
         r = np.sin(zd_edge)
         ax.plot(
-            [-2 / 3 * r, 0],
+            [-3 / 4 * r, 0],
             [-r, -r],
+            color=color,
+            linewidth=linewidth,
+            alpha=alpha,
+        )
+        ax.plot(
+            [-r, -r],
+            [0, -3 / 4 * r],
             color=color,
             linewidth=linewidth,
             alpha=alpha,
@@ -102,8 +110,8 @@ def ax_add_grid(
 def ax_add_ticklabels(
     ax, azimuths_deg, rfov=1.0, fmt=r"{:1.0f}$^\circ$",
 ):
-    xshift = -0.1 * rfov
-    yshift = -0.05 * rfov
+    xshift = -0.07 * rfov
+    yshift = -0.025 * rfov
 
     azimuths = np.deg2rad(azimuths_deg)
     azimuth_deg_strs = [fmt.format(az) for az in azimuths_deg]
