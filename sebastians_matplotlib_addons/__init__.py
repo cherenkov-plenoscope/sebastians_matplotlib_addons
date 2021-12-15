@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib
+import warnings
+
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -23,6 +25,11 @@ def figure(style=FIGURE_16_9, dpi=240):
 
 
 def close_figure(fig):
+    warnings.warn("Use close(fig) instead.", DepricationWarning)
+    plt.close(fig)
+
+
+def close(fig):
     plt.close(fig)
 
 
