@@ -25,7 +25,7 @@ def figure(style=FIGURE_16_9, dpi=240):
 
 
 def close_figure(fig):
-    warnings.warn("Use close(fig) instead.", DepricationWarning)
+    warnings.warn("Use close(fig) instead.", DeprecationWarning)
     plt.close(fig)
 
 
