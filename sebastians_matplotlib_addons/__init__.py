@@ -68,7 +68,7 @@ def ax_add_grid(ax):
     ax.grid(color="k", linestyle="-", linewidth=0.66, alpha=0.1)
 
 
-def ax_add_grid_with_custome_ticks(
+def ax_add_grid_with_explicit_ticks(
     ax,
     xticks,
     yticks,
