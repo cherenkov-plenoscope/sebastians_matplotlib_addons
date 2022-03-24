@@ -6,7 +6,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="sebastians_matplotlib_addons",
-    version="0.0.2",
+    version="0.0.3",
     description="Wrapp and extend the matplotlib library.",
     long_description=long_description,
     url="https://github.com/cherenkov-plenoscope",

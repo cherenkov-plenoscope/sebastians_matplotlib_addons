@@ -68,6 +68,31 @@ def ax_add_grid(ax):
     ax.grid(color="k", linestyle="-", linewidth=0.66, alpha=0.1)
 
 
+def ax_add_grid_with_custome_ticks(
+    ax,
+    xticks,
+    yticks,
+    color="k",
+    linestyle="-",
+    linewidth=0.66,
+    alpha=0.33,
+):
+    for ytick in yticks:
+        ax.axhline(
+            y=ytick,
+            xmin=0,
+            xmax=1,
+            color=color, linestyle=linestyle, linewidth=linewidth, alpha=alpha
+        )
+    for xtick in xticks:
+        ax.axvline(
+            x=xtick,
+            ymin=0,
+            ymax=1,
+            color=color, linestyle=linestyle, linewidth=linewidth, alpha=alpha
+        )
+
+
 def ax_add_circle(
     ax,
     x,
