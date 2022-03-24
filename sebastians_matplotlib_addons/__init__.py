@@ -37,7 +37,11 @@ def close(fig):
 
 AXES_BLANK = {"spines": [], "axes": [], "grid": False}
 AXES_MINIMAL = {"spines": ["left", "bottom"], "axes": ["x", "y"], "grid": True}
-AXES_MATPLOTLIB = {"spines": ["left", "bottom", "right", "top"], "axes": ["x", "y"], "grid": False}
+AXES_MATPLOTLIB = {
+    "spines": ["left", "bottom", "right", "top"],
+    "axes": ["x", "y"],
+    "grid": False,
+}
 
 
 def add_axes(fig, span, style=AXES_MINIMAL):
@@ -69,27 +73,27 @@ def ax_add_grid(ax):
 
 
 def ax_add_grid_with_explicit_ticks(
-    ax,
-    xticks,
-    yticks,
-    color="k",
-    linestyle="-",
-    linewidth=0.66,
-    alpha=0.33,
+    ax, xticks, yticks, color="k", linestyle="-", linewidth=0.66, alpha=0.33,
 ):
     for ytick in yticks:
         ax.axhline(
             y=ytick,
             xmin=0,
             xmax=1,
-            color=color, linestyle=linestyle, linewidth=linewidth, alpha=alpha
+            color=color,
+            linestyle=linestyle,
+            linewidth=linewidth,
+            alpha=alpha,
         )
     for xtick in xticks:
         ax.axvline(
             x=xtick,
             ymin=0,
             ymax=1,
-            color=color, linestyle=linestyle, linewidth=linewidth, alpha=alpha
+            color=color,
+            linestyle=linestyle,
+            linewidth=linewidth,
+            alpha=alpha,
         )
 
 
@@ -149,15 +153,14 @@ def ax_add_histogram(
             alpha=linealpha,
             label=label if i == 0 else None,
         )
-        if draw_bin_walls and i+1 < bincounts.shape[0]:
+        if draw_bin_walls and i + 1 < bincounts.shape[0]:
             ax.plot(
-                [bin_edges[i+1], bin_edges[i+1]],
+                [bin_edges[i + 1], bin_edges[i + 1]],
                 [bincounts[i], bincounts[i + 1]],
                 linestyle=linestyle,
                 color=linecolor,
                 alpha=linealpha,
             )
-
 
         if bincounts_upper is not None and bincounts_lower is not None:
             both_nan = np.isnan(bincounts_upper[i]) and np.isnan(
