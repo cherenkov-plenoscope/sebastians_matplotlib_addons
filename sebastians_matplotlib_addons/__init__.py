@@ -264,3 +264,73 @@ def write_video_from_image_slices(
         )
 
     return rc
+
+
+def ax_pcolormesh_fill(
+    ax,
+    x_bin_edges,
+    y_bin_edges,
+    intensity_rgba,
+    transform,
+    edgecolor='none',
+    linewidth=0.0,
+    threshold=0.0,
+    circle_radius=None
+):
+    assert len(x_bin_edges) == intensity_rgba.shape[0] + 1
+    assert len(y_bin_edges) == intensity_rgba.shape[1] + 1
+
+    assert threshold >= 0.0
+
+    assert transform.shape[0] == 2
+    assert transform.shape[1] == 2
+
+    for ix in range(intensity_rgba.shape[0]):
+        for iy in range(intensity_rgba.shape[1]):
+
+            rgba = intensity_rgba[ix, iy, :]
+            if np.min(rgba) < 0.0 or np.max(rgba) > 1.0:
+                print("intensity_rgba[", ix, ", ", iy, "] = ", rgba, ", out of range [0,1].")
+
+            rgb_norm = np.max(rgba[0:3])
+            rgb_flat = rgba[0:3] / rgb_norm
+
+            if rgb_norm < threshold:
+                continue
+
+            x_start = x_bin_edges[ix]
+            x_stop = x_bin_edges[ix + 1]
+
+            y_start = y_bin_edges[iy]
+            y_stop = y_bin_edges[iy + 1]
+
+            xpoly = [x_start, x_start, x_stop, x_stop]
+            ypoly = [y_start, y_stop, y_stop, y_start]
+
+            txpoly = []
+            typoly = []
+            for i in range(4):
+                vec = np.array([xpoly[i], ypoly[i]])
+                tvec = np.matmul(transform, vec)
+                txpoly.append(tvec[0])
+                typoly.append(tvec[1])
+
+            ax.fill(
+                txpoly,
+                typoly,
+                facecolor=(rgb_flat[0], rgb_flat[1], rgb_flat[2]),
+                edgecolor=edgecolor,
+                linewidth=linewidth,
+                alpha=rgb_norm,
+            )
+
+    if circle_radius:
+        phis = np.linspace(0, 2 * np.pi, 360)
+        xpts = []
+        ypts = []
+        for phi in phis:
+            vec = circle_radius * np.array([np.cos(phi), np.sin(phi)])
+            tvec = np.matmul(transform, vec)
+            xpts.append(tvec[0])
+            ypts.append(tvec[1])
+        ax.plot(xpts, ypts, "k-")
