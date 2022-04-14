@@ -266,6 +266,24 @@ def write_video_from_image_slices(
     return rc
 
 
+def transform_homo(homo, v2):
+    v = np.array([v2[0], v2[1], 1.0])
+    tv = np.matmul(homo, v)
+    return tv[0:2]
+
+
+def transform_homo_multi(homo, xs, ys):
+    assert len(xs) == len(ys)
+    tx = []
+    ty = []
+    for i in range(len(xs)):
+        v2 = np.array([xs[i], ys[i], 1.0])
+        tv2 = transform_homo(homo=homo, v2=v2)
+        tx.append(tv2[0])
+        ty.append(tv2[1])
+    return tx, ty
+
+
 def ax_pcolormesh_fill(
     ax,
     x_bin_edges,
@@ -275,15 +293,17 @@ def ax_pcolormesh_fill(
     edgecolor='none',
     linewidth=0.0,
     threshold=0.0,
-    circle_radius=None
+    circle_radius=None,
+    grid_alpha=0.3,
+    grid_linewidth=0.1,
 ):
     assert len(x_bin_edges) == intensity_rgba.shape[0] + 1
     assert len(y_bin_edges) == intensity_rgba.shape[1] + 1
 
     assert threshold >= 0.0
 
-    assert transform.shape[0] == 2
-    assert transform.shape[1] == 2
+    assert transform.shape[0] == 3
+    assert transform.shape[1] == 3
 
     for ix in range(intensity_rgba.shape[0]):
         for iy in range(intensity_rgba.shape[1]):
@@ -307,13 +327,7 @@ def ax_pcolormesh_fill(
             xpoly = [x_start, x_start, x_stop, x_stop]
             ypoly = [y_start, y_stop, y_stop, y_start]
 
-            txpoly = []
-            typoly = []
-            for i in range(4):
-                vec = np.array([xpoly[i], ypoly[i]])
-                tvec = np.matmul(transform, vec)
-                txpoly.append(tvec[0])
-                typoly.append(tvec[1])
+            txpoly, typoly = transform_homo_multi(transform, xpoly, ypoly)
 
             ax.fill(
                 txpoly,
@@ -330,7 +344,23 @@ def ax_pcolormesh_fill(
         ypts = []
         for phi in phis:
             vec = circle_radius * np.array([np.cos(phi), np.sin(phi)])
-            tvec = np.matmul(transform, vec)
+            tvec = transform_homo(transform, vec)
             xpts.append(tvec[0])
             ypts.append(tvec[1])
-        ax.plot(xpts, ypts, "k-")
+        ax.plot(xpts, ypts, "k-", linewidth=2*grid_linewidth)
+
+    GRID = True
+    if GRID:
+        xmin = np.min(x_bin_edges)
+        xmax = np.max(x_bin_edges)
+        ymin = np.min(y_bin_edges)
+        ymax = np.max(y_bin_edges)
+
+        for xv in x_bin_edges:
+            txs, tys = transform_homo_multi(transform, xs=[xv, xv], ys=[ymin, ymax])
+            ax.plot(txs, tys, "k-", alpha=grid_alpha, linewidth=grid_linewidth)
+
+        for yv in y_bin_edges:
+            txs, tys = transform_homo_multi(transform, xs=[xmin, xmax], ys=[yv, yv])
+            ax.plot(txs, tys, "k-", alpha=grid_alpha, linewidth=grid_linewidth)
+
