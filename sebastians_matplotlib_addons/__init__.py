@@ -168,6 +168,7 @@ def ax_add_histogram(
                     color=face_color,
                     alpha=face_alpha,
                     edgecolor="none",
+                    linewidth=0.0,
                 )
 
 
