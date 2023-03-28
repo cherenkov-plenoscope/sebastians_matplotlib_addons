@@ -116,6 +116,18 @@ def ax_add_circle(
     )
 
 
+def ax_add_hexagon(ax, x, y, r_outer, orientation_deg=0.0, **kwargs):
+    xx = np.zeros(7)
+    yy = np.zeros(7)
+    ori = np.deg2rad(orientation_deg)
+    for i, phi in enumerate(np.linspace(0.0, 2.0 * np.pi, 7)):
+        _x = x + np.cos(phi + ori) * r_outer
+        _y = y + np.sin(phi + ori) * r_outer
+        xx[i] = _x
+        yy[i] = _y
+    ax.plot(xx, yy, **kwargs)
+
+
 def ax_add_hatches(ax, ix, iy, x_bin_edges, y_bin_edges, alpha=0.1):
     x0 = x_bin_edges[ix]
     x1 = x_bin_edges[ix + 1]
