@@ -55,6 +55,31 @@ def ax_add_grid(
         )
 
 
+def ax_add_plot(
+    ax, projection, x, y, **kwargs,
+):
+    tx = []
+    ty = []
+    for i in range(len(x)):
+        tvec = transform(projection, [x[i], y[i]])
+        tx.append(tvec[0])
+        ty.append(tvec[1])
+    ax.plot(tx, ty, **kwargs)
+
+
+def ax_add_mesh(ax, projection, mesh, **kwargs):
+    for e in mesh["edges"]:
+        start = mesh["vertices"][e[0]]
+        stop = mesh["vertices"][e[1]]
+        ax_add_plot(
+            ax=ax,
+            projection=projection,
+            y=[-start[0], -stop[0]],
+            x=[start[1], stop[1]],
+            **kwargs,
+        )
+
+
 def ax_add_circle(
     ax,
     projection,
