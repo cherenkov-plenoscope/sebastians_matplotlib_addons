@@ -56,7 +56,11 @@ def ax_add_grid(
 
 
 def ax_add_plot(
-    ax, projection, x, y, **kwargs,
+    ax,
+    projection,
+    x,
+    y,
+    **kwargs,
 ):
     tx = []
     ty = []
@@ -135,7 +139,6 @@ def ax_add_mesh_intensity_to_alpha(
 
     for ix in range(intensity_rgb.shape[0]):
         for iy in range(intensity_rgb.shape[1]):
-
             rgb = intensity_rgb[ix, iy, :]
             if np.min(rgb) < 0.0 or np.max(rgb) > 1.0:
                 print(
@@ -153,7 +156,7 @@ def ax_add_mesh_intensity_to_alpha(
                 continue
 
             rgb_flat = rgb[0:3] / rgb_norm
-            alpha = rgb_norm ** gamma
+            alpha = rgb_norm**gamma
 
             x_start = x_bin_edges[ix]
             x_stop = x_bin_edges[ix + 1]

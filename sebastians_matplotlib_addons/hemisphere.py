@@ -108,7 +108,10 @@ def ax_add_grid(
 
 
 def ax_add_ticklabels(
-    ax, azimuths_deg, rfov=1.0, fmt=r"{:1.0f}$^\circ$",
+    ax,
+    azimuths_deg,
+    rfov=1.0,
+    fmt=r"{:1.0f}$^\circ$",
 ):
     xshift = -0.07 * rfov
     yshift = -0.025 * rfov

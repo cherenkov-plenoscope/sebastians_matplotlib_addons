@@ -1,23 +1,35 @@
 import setuptools
 import os
 
-with open("README.md", "r") as f:
+
+with open("README.rst", "r", encoding="utf-8") as f:
     long_description = f.read()
+
+
+with open(os.path.join("sebastians_matplotlib_addons", "version.py")) as f:
+    txt = f.read()
+    last_line = txt.splitlines()[-1]
+    version_string = last_line.split()[-1]
+    version = version_string.strip("\"'")
+
 
 setuptools.setup(
     name="sebastians_matplotlib_addons",
-    version="0.0.8",
+    version=version,
     description="Wrapp and extend the matplotlib library.",
     long_description=long_description,
-    url="https://github.com/cherenkov-plenoscope",
+    long_description_content_type="text/x-rst",
+    url="https://github.com/cherenkov-plenoscope/sebastians_matplotlib_addons",
     author="Sebastian Achim Mueller",
     author_email="sebastian-achim.mueller@mpi-hd.mpg.de",
-    license="GPL v3",
-    packages=["sebastians_matplotlib_addons",],
+    packages=[
+        "sebastians_matplotlib_addons",
+    ],
+    package_data={"sebastians_matplotlib_addons": []},
     install_requires=["matplotlib"],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "License :: OSI Approved :: MIT",
         "Operating System :: OS Independent",
         "Natural Language :: English",
         "Intended Audience :: Science/Research",

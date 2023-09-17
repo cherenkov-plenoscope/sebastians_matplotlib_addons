@@ -1,3 +1,4 @@
+from .version import __version__
 import numpy as np
 import matplotlib
 import warnings
@@ -68,7 +69,13 @@ def ax_add_grid(ax, add_minor=False):
 
 
 def ax_add_grid_with_explicit_ticks(
-    ax, xticks, yticks, color="k", linestyle="-", linewidth=0.66, alpha=0.33,
+    ax,
+    xticks,
+    yticks,
+    color="k",
+    linestyle="-",
+    linewidth=0.66,
+    alpha=0.33,
 ):
     for ytick in yticks:
         ax.axhline(
@@ -224,7 +231,10 @@ def ax_add_box(ax, xlim, ylim, color="k", linewidth=None):
 
 
 def write_video_from_image_slices(
-    image_sequence_wildcard_path, output_path, frames_per_second=30, threads=1,
+    image_sequence_wildcard_path,
+    output_path,
+    frames_per_second=30,
+    threads=1,
 ):
     """
     Writes an h264 video.mov from an image-sequence
