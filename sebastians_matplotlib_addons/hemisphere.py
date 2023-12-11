@@ -3,23 +3,15 @@ import matplotlib.patches as plt_patches
 import matplotlib.colors as plt_colors
 
 
-def ax_add_points(
+def ax_add_projected_points_with_colors(
     ax,
     azimuths_deg,
     zeniths_deg,
-    point_diameter_deg,
+    half_angle_deg,
     color=None,
     alpha=None,
     rgbas=None,
 ):
-    point_diameter = np.deg2rad(point_diameter_deg)
-    zeniths = np.deg2rad(zeniths_deg)
-    azimuths = np.deg2rad(azimuths_deg)
-
-    proj_radii = np.sin(zeniths)
-    proj_x = np.cos(azimuths) * proj_radii
-    proj_y = np.sin(azimuths) * proj_radii
-
     if rgbas is not None:
         _colors = rgbas[:, 0:3]
         _alphas = rgbas[:, 3]
@@ -29,19 +21,68 @@ def ax_add_points(
         _colors = [color for i in range(len(zeniths))]
         _alphas = [alpha for i in range(len(zeniths))]
 
-    for i in range(len(zeniths)):
-        e1 = plt_patches.Ellipse(
-            (proj_x[i], proj_y[i]),
-            width=point_diameter * np.cos(zeniths[i]),
-            height=point_diameter,
-            angle=np.rad2deg(azimuths[i]),
-            linewidth=0,
+    for i in range(len(_colors)):
+        ax_add_projected_circle(
+            ax=ax,
+            azimuth_deg=azimuths_deg[i],
+            zenith_deg=zeniths_deg[i],
+            half_angle_deg=half_angle_deg,
+            linewidth=0.0,
             fill=True,
             zorder=2,
             facecolor=_colors[i],
             alpha=_alphas[i],
         )
-        ax.add_patch(e1)
+
+
+def ax_add_projected_circle(
+    ax, azimuth_deg, zenith_deg, half_angle_deg, **kwargs
+):
+    point_diameter = 2.0 * np.deg2rad(half_angle_deg)
+    zenith = np.deg2rad(zenith_deg)
+    azimuth = np.deg2rad(azimuth_deg)
+
+    proj_radii = np.sin(zenith)
+    proj_x = np.cos(azimuth) * proj_radii
+    proj_y = np.sin(azimuth) * proj_radii
+
+    e1 = plt_patches.Ellipse(
+        (proj_x, proj_y),
+        width=point_diameter * np.cos(zenith),
+        height=point_diameter,
+        angle=azimuth_deg,
+        **kwargs,
+    )
+    ax.add_patch(e1)
+
+
+def _transform(az, zd):
+    r = np.sin(zd)
+    x = np.cos(az) * r
+    y = np.sin(az) * r
+    return x, y
+
+
+def ax_add_mesh(ax, azimuths_deg, zeniths_deg, faces, **kwargs):
+    azs = np.deg2rad(azimuths_deg)
+    zds = np.deg2rad(zeniths_deg)
+    for face in faces:
+        a_az = azs[face[0]]
+        a_zd = zds[face[0]]
+
+        b_az = azs[face[1]]
+        b_zd = zds[face[1]]
+
+        c_az = azs[face[2]]
+        c_zd = zds[face[2]]
+
+        aa = _transform(az=a_az, zd=a_zd)
+        bb = _transform(az=b_az, zd=b_zd)
+        cc = _transform(az=c_az, zd=c_zd)
+
+        ax.plot([aa[0], bb[0]], [aa[1], bb[1]], **kwargs)
+        ax.plot([bb[0], cc[0]], [bb[1], cc[1]], **kwargs)
+        ax.plot([cc[0], aa[0]], [cc[1], aa[1]], **kwargs)
 
 
 def ax_add_grid(
