@@ -1,13 +1,14 @@
 import numpy as np
 import matplotlib.patches as plt_patches
 import matplotlib.colors as plt_colors
+import spherical_coordinates
 
 
 def ax_add_projected_points_with_colors(
     ax,
-    azimuths_deg,
-    zeniths_deg,
-    half_angle_deg,
+    azimuths_rad,
+    zeniths_rad,
+    half_angle_rad,
     color=None,
     alpha=None,
     rgbas=None,
@@ -24,9 +25,9 @@ def ax_add_projected_points_with_colors(
     for i in range(len(_colors)):
         ax_add_projected_circle(
             ax=ax,
-            azimuth_deg=azimuths_deg[i],
-            zenith_deg=zeniths_deg[i],
-            half_angle_deg=half_angle_deg,
+            azimuth_rad=azimuths_rad[i],
+            zenith_rad=zeniths_rad[i],
+            half_angle_rad=half_angle_rad,
             linewidth=0.0,
             fill=True,
             zorder=2,
@@ -36,34 +37,32 @@ def ax_add_projected_points_with_colors(
 
 
 def ax_add_projected_circle(
-    ax, azimuth_deg, zenith_deg, half_angle_deg, **kwargs
+    ax, azimuth_rad, zenith_rad, half_angle_rad, **kwargs
 ):
-    point_diameter = 2.0 * np.deg2rad(half_angle_deg)
-    zenith = np.deg2rad(zenith_deg)
-    azimuth = np.deg2rad(azimuth_deg)
+    point_diameter = 2.0 * half_angle_rad
 
-    proj_radii = np.sin(zenith)
-    proj_x = np.cos(azimuth) * proj_radii
-    proj_y = np.sin(azimuth) * proj_radii
+    proj_radii = np.sin(zenith_rad)
+    proj_x = np.cos(azimuth_rad) * proj_radii
+    proj_y = np.sin(azimuth_rad) * proj_radii
 
     e1 = plt_patches.Ellipse(
         (proj_x, proj_y),
-        width=point_diameter * np.cos(zenith),
+        width=point_diameter * np.cos(zenith_rad),
         height=point_diameter,
-        angle=azimuth_deg,
+        angle=np.rad2deg(azimuth_rad),
         **kwargs,
     )
     ax.add_patch(e1)
 
 
 def ax_add_magnet_flux_symbol(
-    ax, azimuth_deg, zenith_deg, half_angle_deg, direction, **kwargs
+    ax, azimuth_rad, zenith_rad, half_angle_rad, direction, **kwargs
 ):
     ax_add_projected_circle(
         ax=ax,
-        azimuth_deg=azimuth_deg,
-        zenith_deg=zenith_deg,
-        half_angle_deg=half_angle_deg,
+        azimuth_rad=azimuth_rad,
+        zenith_rad=zenith_rad,
+        half_angle_rad=half_angle_rad,
         linewidth=1,
         fill=False,
         **kwargs,
@@ -71,43 +70,36 @@ def ax_add_magnet_flux_symbol(
     if direction == "inwards":
         ax_add_projected_circle(
             ax=ax,
-            azimuth_deg=azimuth_deg,
-            zenith_deg=zenith_deg,
-            half_angle_deg=half_angle_deg * 0.25,
+            azimuth_rad=azimuth_rad,
+            zenith_rad=zenith_rad,
+            half_angle_rad=half_angle_rad * 0.25,
             linewidth=0.0,
             fill=True,
             **kwargs,
         )
     elif "outwards":
-        x, y = _transform(np.deg2rad(azimuth_deg), np.deg2rad(zenith_deg))
+        x, y = _transform(azimuth_rad, zenith_rad)
         ax.plot(
             x,
             y,
             marker="x",
-            markersize=6.5 * np.cos(np.deg2rad(zenith_deg)),
+            markersize=6.5 * np.cos(zenith_rad),
             **kwargs,
         )
-        nn = np.deg2rad(half_angle_deg)
-        cx = np.sqrt(1.0 - nn**2 - nn**2)
 
 
 def _transform(az, zd):
-    r = np.sin(zd)
-    x = np.cos(az) * r
-    y = np.sin(az) * r
-    return x, y
+    return spherical_coordinates.az_zd_to_cx_cy(azimuth_rad=az, zenith_rad=zd)
 
 
-def ax_add_plot(ax, azimuths_deg, zeniths_deg, **kwargs):
-    _x, _y = _transform(
-        az=np.deg2rad(azimuths_deg), zd=np.deg2rad(zeniths_deg)
-    )
+def ax_add_plot(ax, azimuths_rad, zeniths_rad, **kwargs):
+    _x, _y = _transform(az=azimuths_rad, zd=zeniths_rad)
     ax.plot(_x, _y, **kwargs)
 
 
-def ax_add_mesh(ax, azimuths_deg, zeniths_deg, faces, **kwargs):
-    azs = np.deg2rad(azimuths_deg)
-    zds = np.deg2rad(zeniths_deg)
+def ax_add_mesh(ax, azimuths_rad, zeniths_rad, faces, **kwargs):
+    azs = azimuths_rad
+    zds = zeniths_rad
     for face in faces:
         a_az = azs[face[0]]
         a_zd = zds[face[0]]
@@ -127,18 +119,32 @@ def ax_add_mesh(ax, azimuths_deg, zeniths_deg, faces, **kwargs):
         ax.plot([cc[0], aa[0]], [cc[1], aa[1]], **kwargs)
 
 
+def ax_add_grid_stellarium_style(ax, color="black", alpha=1.0, linewidth=0.05):
+    TAU = 2.0 * np.pi
+    ax_add_grid(
+        ax=ax,
+        azimuths_rad=np.linspace(0, TAU, 36, endpoint=False),
+        zeniths_rad=np.deg2rad([0, 10, 20, 30, 40, 50, 60, 70, 80, 90]),
+        linewidth=linewidth,
+        color=color,
+        alpha=alpha,
+        draw_lower_horizontal_edge_rad=None,
+        zenith_min_rad=np.deg2rad(5),
+    )
+
+
 def ax_add_grid(
     ax,
-    azimuths_deg,
-    zeniths_deg,
+    azimuths_rad,
+    zeniths_rad,
     linewidth,
     color,
     alpha,
-    draw_lower_horizontal_edge_deg=None,
-    zenith_min_deg=0.0,
+    draw_lower_horizontal_edge_rad=None,
+    zenith_min_rad=0.0,
 ):
-    zeniths = np.deg2rad(zeniths_deg)
-    zenith_min = np.deg2rad(zenith_min_deg)
+    zeniths = zeniths_rad
+    zenith_min = zenith_min_rad
 
     proj_radii = np.sin(zeniths)
     for i in range(len(zeniths)):
@@ -152,7 +158,7 @@ def ax_add_grid(
             alpha=alpha,
         )
 
-    azimuths = np.deg2rad(azimuths_deg)
+    azimuths = azimuths_rad
     for a in range(len(azimuths)):
         for z in range(len(zeniths)):
             if z == 0:
@@ -173,8 +179,8 @@ def ax_add_grid(
                 alpha=alpha,
             )
 
-    if draw_lower_horizontal_edge_deg is not None:
-        zd_edge = np.deg2rad(draw_lower_horizontal_edge_deg)
+    if draw_lower_horizontal_edge_rad is not None:
+        zd_edge = draw_lower_horizontal_edge_rad
         r = np.sin(zd_edge)
         ax.plot(
             [-3 / 4 * r, 0],
@@ -195,23 +201,6 @@ def ax_add_grid(
         )
 
 
-def ax_add_ticklabels(
-    ax,
-    azimuths_deg,
-    rfov=1.0,
-    fmt=r"{:1.0f}$^\circ$",
-):
-    xshift = -0.07 * rfov
-    yshift = -0.025 * rfov
-
-    azimuths = np.deg2rad(azimuths_deg)
-    azimuth_deg_strs = [fmt.format(az) for az in azimuths_deg]
-    xs = rfov * np.cos(azimuths) + xshift
-    ys = rfov * np.sin(azimuths) + yshift
-    for a in range(len(azimuths)):
-        ax.text(x=xs[a], y=ys[a], s=azimuth_deg_strs[a])
-
-
 def ax_add_circle(ax, x, y, r, linewidth, color, alpha):
     phis = np.linspace(0, 2 * np.pi, 1001)
     xs = r * np.cos(phis)
@@ -222,20 +211,20 @@ def ax_add_circle(ax, x, y, r, linewidth, color, alpha):
 def ax_add_ticklabel_text(
     ax,
     radius=0.95,
-    label_azimuths_deg=[0, 90, 180, 270],
+    label_azimuths_rad=[0, 1 / 2 * np.pi, 2 / 2 * np.pi, 3 / 2 * np.pi],
     label_azimuths=["N", "E", "S", "W"],
     xshift=-0.05,
     yshift=-0.025,
     **kwargs,
 ):
-    for i in range(len(label_azimuths_deg)):
-        _az = np.deg2rad(label_azimuths_deg[i])
-        xs = radius * np.cos(_az) + xshift
-        ys = radius * np.sin(_az) + yshift
+    for i in range(len(label_azimuths_rad)):
+        _az = label_azimuths_rad[i]
+        xs = radius * (np.cos(_az) + xshift)
+        ys = radius * (np.sin(_az) + yshift)
         ax.text(
             x=xs,
             y=ys,
             s=label_azimuths[i],
-            rotation=90 + label_azimuths_deg[i],
+            rotation=90 + np.rad2deg(label_azimuths_rad[i]),
             **kwargs,
         )

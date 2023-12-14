@@ -26,7 +26,10 @@ setuptools.setup(
         "sebastians_matplotlib_addons",
     ],
     package_data={"sebastians_matplotlib_addons": []},
-    install_requires=["matplotlib"],
+    install_requires=[
+        "matplotlib",
+        "spherical_coordinates>=0.0.1",
+    ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT",
