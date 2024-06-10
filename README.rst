@@ -4,9 +4,13 @@ Sebastian's Matplotlib Addons
 |TestStatus| |PyPiStatus| |BlackStyle| |BlackPackStyle| |MITLicenseBadge|
 
 
-A personal collection of addons to matplotlib.
-The goal is to tailor matplotlib to create the plotting style I prefer.
+A personal collection of addons to matplotlib to create the plotting style I prefer.
 
+|ExampleFigure|
+
+This is mostly about having a grid and reducing/removing the axes and spines in the top and on the right.
+
+.. |ExampleFigure| image:: https://github.com/cherenkov-plenoscope/sebastians_matplotlib_addons/blob/main/readme/namibia-all-particles.jpg?raw=True
 
 .. |TestStatus| image:: https://github.com/cherenkov-plenoscope/sebastians_matplotlib_addons/actions/workflows/test.yml/badge.svg?branch=main
     :target: https://github.com/cherenkov-plenoscope/sebastians_matplotlib_addons/actions/workflows/test.yml
