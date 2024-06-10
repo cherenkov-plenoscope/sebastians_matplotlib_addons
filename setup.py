@@ -28,7 +28,7 @@ setuptools.setup(
     package_data={"sebastians_matplotlib_addons": []},
     install_requires=[
         "matplotlib",
-        "spherical_coordinates>=0.0.1",
+        "spherical-coordinates>=0.1.6",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
