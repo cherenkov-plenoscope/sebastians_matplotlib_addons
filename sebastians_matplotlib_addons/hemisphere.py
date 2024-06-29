@@ -97,6 +97,30 @@ def ax_add_plot(ax, azimuths_rad, zeniths_rad, **kwargs):
     ax.plot(_x, _y, **kwargs)
 
 
+def ax_add_faces(ax, azimuths_rad, zeniths_rad, faces, faces_colors):
+    azs = azimuths_rad
+    zds = zeniths_rad
+    for f in range(len(faces)):
+        face = faces[f]
+        a_az = azs[face[0]]
+        a_zd = zds[face[0]]
+
+        b_az = azs[face[1]]
+        b_zd = zds[face[1]]
+
+        c_az = azs[face[2]]
+        c_zd = zds[face[2]]
+
+        xx = np.zeros(3)
+        yy = np.zeros(3)
+
+        xx[0], yy[0] = _transform(az=a_az, zd=a_zd)
+        xx[1], yy[1] = _transform(az=b_az, zd=b_zd)
+        xx[2], yy[2] = _transform(az=c_az, zd=c_zd)
+
+        ax.fill(xx, yy, facecolor=faces_colors[f])
+
+
 def ax_add_mesh(ax, azimuths_rad, zeniths_rad, faces, **kwargs):
     azs = azimuths_rad
     zds = zeniths_rad
