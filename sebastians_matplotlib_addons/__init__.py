@@ -7,6 +7,8 @@ import warnings
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.colors as plt_colors
+import matplotlib.patches as plt_patches
+
 
 from . import hemisphere
 from . import pseudo3d
@@ -118,6 +120,25 @@ def ax_add_circle(
     )
 
 
+def ax_add_pie_slice(
+    ax,
+    x=0,
+    y=0,
+    phi_start_rad=0,
+    phi_stop_rad=0.5 * np.pi,
+    radius=1,
+    num_steps=100,
+    **kwargs,
+):
+    points = [(0, 0)]
+    for phi_rad in np.linspace(phi_start_rad, phi_stop_rad, num_steps):
+        point = (x + radius * np.cos(phi_rad), y + radius * np.sin(phi_rad))
+        points.append(point)
+    points = np.asarray(points)
+    p = plt_patches.Polygon(points, **kwargs)
+    ax.add_patch(p)
+
+
 def ax_add_hexagon(ax, x, y, r_outer, orientation_deg=0.0, **kwargs):
     xx = np.zeros(7)
     yy = np.zeros(7)
@@ -220,3 +241,57 @@ def ax_add_box(ax, xlim, ylim, **kwargs):
     #  __
     #  __|
     ax.plot([xlim[0], xlim[0]], [ylim[0], ylim[1]], **kwargs)
+
+
+def add_axes_zenith_range_indicator(
+    fig,
+    zenith_bin_edges_rad,
+    zenith_bin,
+    span=(0.9, 0.84, 0.09, 0.16),
+    fontsize=5,
+):
+    ax = add_axes(
+        fig=fig,
+        span=span,
+        style={"spines": ["left", "bottom"], "axes": [], "grid": True},
+    )
+    _eps = 1e-2
+    ax.set_aspect("equal")
+    ax.set_xlim([-_eps, 1 + _eps])
+    ax.set_ylim([-_eps, 1 + _eps])
+    ax_add_circle(
+        ax=ax, x=0, y=0, r=1, color="black", alpha=0.2, linewidth=0.5
+    )
+    num_bins = len(zenith_bin_edges_rad) - 1
+    for zzz in range(num_bins):
+        ax_add_pie_slice(
+            ax=ax,
+            phi_start_rad=np.pi / 2 - zenith_bin_edges_rad[zzz],
+            phi_stop_rad=np.pi / 2 - zenith_bin_edges_rad[zzz + 1],
+            facecolor="black",
+            alpha=0.5 if zzz == zenith_bin else 0.2,
+        )
+    ax.text(
+        s=make_angle_range_str(
+            start_rad=zenith_bin_edges_rad[zenith_bin],
+            stop_rad=zenith_bin_edges_rad[zenith_bin + 1],
+        ),
+        x=0.0,
+        y=-0.2,
+        fontsize=fontsize,
+        transform=ax.transAxes,
+    )
+    return ax
+
+
+def make_angle_range_str(start_rad, stop_rad):
+    circ_str = r"$^\circ{}$"
+    zenith_range_str = (
+        f"[{np.rad2deg(start_rad):0.1f}"
+        + circ_str
+        + ", "
+        + f"{np.rad2deg(stop_rad):0.1f}"
+        + circ_str
+        + ")"
+    )
+    return zenith_range_str
