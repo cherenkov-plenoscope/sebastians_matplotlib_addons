@@ -105,11 +105,8 @@ def ax_add_circle(
     x,
     y,
     r,
-    linewidth=1.0,
-    linestyle="-",
-    color="k",
-    alpha=1,
     num_steps=1000,
+    **kwargs,
 ):
     phi = np.linspace(0, 2 * np.pi, num_steps)
     xs = x + r * np.cos(phi)
@@ -117,10 +114,7 @@ def ax_add_circle(
     ax.plot(
         xs,
         ys,
-        linewidth=linewidth,
-        linestyle=linestyle,
-        alpha=alpha,
-        color=color,
+        **kwargs,
     )
 
 
@@ -136,12 +130,29 @@ def ax_add_hexagon(ax, x, y, r_outer, orientation_deg=0.0, **kwargs):
     ax.plot(xx, yy, **kwargs)
 
 
-def ax_add_hatches(ax, ix, iy, x_bin_edges, y_bin_edges, alpha=0.1):
+def ax_add_hatches(
+    ax,
+    ix,
+    iy,
+    x_bin_edges,
+    y_bin_edges,
+    linestyle="-",
+    color="black",
+    alpha=0.1,
+    **kwargs,
+):
     x0 = x_bin_edges[ix]
     x1 = x_bin_edges[ix + 1]
     y0 = y_bin_edges[iy]
     y1 = y_bin_edges[iy + 1]
-    ax.plot([x0, x1], [y0, y1], "-k", alpha=alpha)
+    ax.plot(
+        [x0, x1],
+        [y0, y1],
+        color=color,
+        linestyle=linestyle,
+        alpha=alpha,
+        **kwargs,
+    )
 
 
 def ax_add_histogram(
@@ -193,39 +204,19 @@ def ax_add_histogram(
                 )
 
 
-def ax_add_box(ax, xlim, ylim, color="k", linewidth=None):
+def ax_add_box(ax, xlim, ylim, **kwargs):
     """
     Draw a rectangular box in xlim, ylim to ax.
     """
     #  __
     # |  |
-    ax.plot(
-        [xlim[0], xlim[1]],
-        [ylim[0], ylim[0]],
-        color=color,
-        linewidth=linewidth,
-    )
+    ax.plot([xlim[0], xlim[1]], [ylim[0], ylim[0]], **kwargs)
     #  __
     # |__
-    ax.plot(
-        [xlim[1], xlim[1]],
-        [ylim[0], ylim[1]],
-        color=color,
-        linewidth=linewidth,
-    )
+    ax.plot([xlim[1], xlim[1]], [ylim[0], ylim[1]], **kwargs)
     #
     # |__|
-    ax.plot(
-        [xlim[0], xlim[1]],
-        [ylim[1], ylim[1]],
-        color=color,
-        linewidth=linewidth,
-    )
+    ax.plot([xlim[0], xlim[1]], [ylim[1], ylim[1]], **kwargs)
     #  __
     #  __|
-    ax.plot(
-        [xlim[0], xlim[0]],
-        [ylim[0], ylim[1]],
-        color=color,
-        linewidth=linewidth,
-    )
+    ax.plot([xlim[0], xlim[0]], [ylim[0], ylim[1]], **kwargs)
