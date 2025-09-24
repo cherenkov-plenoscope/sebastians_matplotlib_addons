@@ -62,13 +62,16 @@ def add_axes(fig, span, style=AXES_MINIMAL):
         ax.axes.get_yaxis().set_visible(False)
 
     if style["grid"]:
-        ax_add_grid(ax)
+        ax_add_grid(ax, add_minor=True)
     return ax
 
 
 def ax_add_grid(ax, add_minor=False):
-    which = "both" if add_minor else "major"
-    ax.grid(color="grey", linestyle="-", linewidth=0.33, which=which)
+    ax.grid(color="grey", linestyle="-", linewidth=0.33, which="major")
+    if add_minor:
+        ax.grid(
+            color="lightgrey", linestyle="-", linewidth=0.15, which="minor"
+        )
 
 
 def ax_add_grid_with_explicit_ticks(
